@@ -14,6 +14,6 @@ export const User = gql`
   }
   # Creating the user
   type Mutation {
-    createUser(username: String!, email: String!, password: String!): User!
+    register(username: String!, email: String!, password: String!): Boolean!
   }
 `;

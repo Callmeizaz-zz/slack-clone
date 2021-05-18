@@ -2,8 +2,10 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { application } from "./graphql/index";
 import models from "./models";
+import cors from "cors";
 
 const app = express();
+app.use(cors("*"));
 const graphqlEndpoints = "/graphql";
 
 const schema = application.createSchemaForApollo();
