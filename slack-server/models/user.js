@@ -4,12 +4,29 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true,
       isNull: false,
+      validate: {
+        isAlphanumeric: {
+          args: true,
+          msg: "The username can only contain letters and numbers",
+        },
+        len: {
+          args: [3, 20],
+          msg: "Username too short must be 3 characters",
+        },
+      },
     },
     email: {
       type: DataTypes.STRING,
       unique: true,
       isEmail: true,
       isNull: false,
+      validate: {
+        isEmail: {
+          isUppercase: true,
+          args: true,
+          msg: "Invalid Email",
+        },
+      },
     },
     password: {
       type: DataTypes.STRING,
