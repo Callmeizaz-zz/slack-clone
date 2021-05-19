@@ -18,6 +18,13 @@ export const User = gql`
     user: User
     errors: [Error!]
   }
+
+  type LoginResponse {
+    ok: Boolean!
+    errors: [Error!]
+    refreshToken: String
+    token: String
+  }
   # Creating the user
   type Mutation {
     register(
@@ -25,5 +32,6 @@ export const User = gql`
       email: String!
       password: String!
     ): RegisterResponse!
+    login(email: String!, password: String!): LoginResponse!
   }
 `;
