@@ -1,20 +1,47 @@
 import bcrypt from "bcrypt";
+import _ from "lodash";
+
+const formatErrors = (err, models) => {
+  if (err instanceof models.Sequelize.ValidationError) {
+    return err.errors.map((x) => _.pick(x, ["path", "message"]));
+  }
+  return [{ path: "users", message: "Something went wrong" }];
+};
 
 export const UserResolver = {
   Query: {
-    getUser: (parent, { id }, { models }) =>
-      models.User.findOne({ where: { id } }),
-
-    allUsers: (parent, args, { models }) => models.User.findAll(),
+    getUser: async (parent, { id }, { models }) =>
+      await models.User.findOne({ where: { id } }),
+    allUsers: async (parent, _, { models }) => await models.User.findAll(),
   },
   Mutation: {
     register: async (parent, { password, ...otherArgs }, { models }) => {
       try {
+        if (password.length < 5 || password.length > 50) {
+          return {
+            ok: false,
+            errors: [
+              {
+                path: "password",
+                message: "Password is too short, Must be 5 characters!",
+              },
+            ],
+          };
+        }
         const hashedPassword = await bcrypt.hash(password, 12);
-        await models.User.create({ ...otherArgs, password: hashedPassword });
-        return true;
+        const user = await models.User.create({
+          ...otherArgs,
+          password: hashedPassword,
+        });
+        return {
+          ok: true,
+          user,
+        };
       } catch (error) {
-        return false;
+        return {
+          ok: false,
+          errors: formatErrors(error, models),
+        };
       }
     },
   },

@@ -12,8 +12,18 @@ export const User = gql`
     getUser(id: Int!): User!
     allUsers: [User!]!
   }
+
+  type RegisterResponse {
+    ok: Boolean!
+    user: User
+    errors: [Error!]
+  }
   # Creating the user
   type Mutation {
-    register(username: String!, email: String!, password: String!): Boolean!
+    register(
+      username: String!
+      email: String!
+      password: String!
+    ): RegisterResponse!
   }
 `;
